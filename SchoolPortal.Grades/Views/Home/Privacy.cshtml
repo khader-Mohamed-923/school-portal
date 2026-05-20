@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-purple-500 mb-6">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+        </div>
+        <h1 class="text-4xl font-black mb-4">
+            <span class="gradient-text">Privacy Policy</span>
+        </h1>
+        <p class="text-gray-400">Your privacy is important to us</p>
+    </div>
+
+    <!-- Content -->
+    <div class="glass rounded-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500"></div>
+        <div class="p-8 space-y-8">
+            <section>
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Information We Collect</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed">
+                    We collect academic performance data including student IDs, course names, scores, and grade dates. This information is used solely for educational tracking and performance analysis purposes.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span>How We Use Your Data</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed">
+                    Your data is used to provide grade management services, generate performance insights, and improve the educational experience. We do not sell or share your personal information with third parties.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                    </svg>
+                    <span>Data Security</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed">
+                    We implement industry-standard security measures to protect your data. All information is encrypted and stored securely. Access to personal data is restricted to authorized personnel only.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Your Rights</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed">
+                    You have the right to access, correct, or delete your personal data at any time. Contact the administration for any privacy-related concerns or requests.
+                </p>
+            </section>
+        </div>
+    </div>
+
+    <div class="text-center mt-8">
+        <a asp-controller="Grades" asp-action="Index" class="inline-flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            <span>Back to Grades</span>
+        </a>
+    </div>
+</div>
