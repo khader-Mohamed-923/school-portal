@@ -1,6 +1,30 @@
 # SchoolPortal - Microservices Architecture
 
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Microservices](https://img.shields.io/badge/Architecture-Microservices-FF6B6B?style=for-the-badge)
+
 A modern, containerized school management system built with ASP.NET Core 10.0, featuring a microservices architecture with two independent services for managing students and grades.
+
+## 📑 Table of Contents
+
+- [Architecture Overview](#️-architecture-overview)
+- [Project Highlights](#-project-highlights)
+- [Screenshots](#-screenshots)
+- [Features](#-features)
+- [Technology Stack](#️-technology-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Configuration](#-configuration)
+- [Database Schema](#-database-schema)
+- [API Endpoints](#-api-endpoints)
+- [Docker Details](#-docker-details)
+- [Testing the Application](#-testing-the-application)
+- [Application Screenshots](#-application-screenshots)
+- [Development](#️-development)
+- [Troubleshooting](#-troubleshooting)
 
 ## 🏗️ Architecture Overview
 
@@ -24,6 +48,36 @@ SchoolPortal consists of two microservices that communicate over HTTP:
           ▼                    ▼                    ▼
     localhost:5001       localhost:5002       localhost:1433
 ```
+
+## ✨ Project Highlights
+
+This project demonstrates:
+
+- ✅ **Microservices Architecture**: Two independent services communicating via HTTP APIs
+- ✅ **Docker Containerization**: Multi-stage builds with optimized images
+- ✅ **Service Orchestration**: Docker Compose managing multiple containers
+- ✅ **Inter-Service Communication**: HTTP client for service-to-service validation
+- ✅ **Database Automation**: Automatic migrations on container startup
+- ✅ **Modern UI/UX**: Responsive design with Tailwind CSS and neon theme
+- ✅ **RESTful APIs**: Clean API endpoints for data access
+- ✅ **Error Handling**: Graceful degradation and custom exception handlers
+- ✅ **Data Persistence**: SQL Server with persistent volumes
+- ✅ **Central Package Management**: Consistent dependency versions across services
+
+> **See the application in action**: Check out the [Screenshots](#-screenshots) section below!
+
+## 📸 Screenshots
+
+### Students Service
+![Students Service Home](img/student_service_image.png)
+*Students Service landing page with modern neon-themed design*
+
+![Students Management](img/view_Student_Screen_in_student_service.png)
+*Student management interface with CRUD operations*
+
+### Grades Service
+![Grades Service](img/grade_service_image.png)
+*Grades Service interface for managing academic records*
 
 ## 📋 Features
 
@@ -257,6 +311,30 @@ docker-compose up -d
 
 # Your data should still be there!
 ```
+
+## 🎨 Application Screenshots
+
+The application features a modern, responsive design with a neon-themed UI:
+
+### Students Service Interface
+- **Home Page**: Futuristic landing page with service navigation and system status
+- **Student Directory**: Complete CRUD interface for managing student records
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Real-time Validation**: Email uniqueness checks and form validation
+
+### Grades Service Interface
+- **Grade Management**: Intuitive interface for recording and managing grades
+- **Student Validation**: Real-time validation against Students Service API
+- **Error Handling**: Graceful degradation when Students Service is unavailable
+- **Modern UI**: Consistent design language with Students Service
+
+### Key UI Features
+- 🎨 Tailwind CSS for modern, utility-first styling
+- 🌈 Neon-themed color scheme with gradient effects
+- 📱 Fully responsive layout for all screen sizes
+- ⚡ Smooth animations and transitions
+- 🎯 Bootstrap Icons for consistent iconography
+- 🌙 Dark theme optimized for reduced eye strain
 
 ## 🛠️ Development
 
