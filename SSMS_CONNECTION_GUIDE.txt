@@ -1,0 +1,137 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                   🔍 FIND YOUR DATA IN SSMS - QUICK GUIDE                  ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ❌ WHAT YOU WERE DOING (WRONG)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Server:   .  (or localhost)
+Database: SchoolPortal_Students
+Result:   ❌ Empty or doesn't exist
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ✅ WHAT YOU SHOULD DO (CORRECT)                                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+1. Open SSMS
+
+2. In "Connect to Server" dialog:
+   
+   Server type:       Database Engine
+   Server name:       localhost,1433          ⬅️ NOTE THE COMMA!
+   Authentication:    SQL Server Authentication
+   Login:             sa
+   Password:          YourStrong!Passw0rd
+   
+   Click [Connect]
+
+3. In Query Window, run:
+
+   USE SchoolPortalDB;
+   GO
+   
+   SELECT * FROM Students;
+   GO
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📊 YOUR DATA LOCATION                                                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+✅ Server:     localhost,1433 (Docker SQL Server)
+✅ Database:   SchoolPortalDB
+✅ Table:      Students
+✅ Password:   YourStrong!Passw0rd
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  🔍 USEFUL SQL QUERIES                                                     │
+└────────────────────────────────────────────────────────────────────────────┘
+
+-- View all students
+USE SchoolPortalDB;
+SELECT * FROM Students;
+
+-- View all grades
+SELECT * FROM Grades;
+
+-- Count records
+SELECT COUNT(*) AS TotalStudents FROM Students;
+SELECT COUNT(*) AS TotalGrades FROM Grades;
+
+-- View students with grades
+SELECT 
+    s.FirstName + ' ' + s.LastName AS StudentName,
+    s.Email,
+    g.CourseName,
+    g.Score,
+    g.GradeDate
+FROM Students s
+LEFT JOIN Grades g ON s.Id = g.StudentId
+ORDER BY s.Id;
+
+-- View recent students
+SELECT TOP 10 * 
+FROM Students 
+ORDER BY EnrollmentDate DESC;
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  🎯 WHY THIS HAPPENED                                                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Your application is running in Docker containers.
+
+The containers are configured to use the Docker SQL Server instance,
+NOT your local SQL Server.
+
+Connection String in Container:
+Server=sqlserver;Database=SchoolPortalDB;User Id=sa;Password=YourStrong!Passw0rd
+
+From outside Docker (SSMS), you access it via:
+Server=localhost,1433
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ⚡ QUICK TEST                                                             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Run this in SSMS after connecting to localhost,1433:
+
+SELECT 
+    DB_NAME() AS CurrentDatabase,
+    @@SERVERNAME AS ServerName,
+    (SELECT COUNT(*) FROM Students) AS StudentCount,
+    (SELECT COUNT(*) FROM Grades) AS GradeCount;
+
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  🔧 TROUBLESHOOTING                                                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Problem: Can't connect to localhost,1433
+Solution: Make sure Docker containers are running
+          Run: docker ps
+
+Problem: Login failed for 'sa'
+Solution: Password is: YourStrong!Passw0rd (case-sensitive)
+
+Problem: Database 'SchoolPortalDB' doesn't exist
+Solution: Containers need to run at least once to create it
+          Run: docker-compose up -d
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                    YOUR DATA IS THERE! JUST USE:                           ║
+║                                                                            ║
+║                    Server: localhost,1433                                  ║
+║                    Login: sa / YourStrong!Passw0rd                        ║
+║                    Database: SchoolPortalDB                                ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
