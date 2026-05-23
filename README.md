@@ -32,18 +32,18 @@ SchoolPortal consists of two microservices that communicate over HTTP:
 
 - **Students Service**: Manages student information and profiles
 - **Grades Service**: Manages academic grades and validates students via the Students Service API
-- **SQL Server**: Shared database server with automatic migrations
+- **SQL Server**: Shared database server with automatic migrations, maintaining strict database-per-service isolation
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
-│                      Docker Network                          │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │   Students   │◄───│    Grades    │    │  SQL Server  │  │
-│  │   Service    │    │   Service    │───►│   Database   │  │
-│  │ Port: 5001   │    │ Port: 5002   │    │  Port: 1433  │  │
-│  └──────────────┘    └──────────────┘    └──────────────┘  │
-│         │                    │                    │          │
-└─────────┼────────────────────┼────────────────────┼──────────┘
+│                      Docker Network                         │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐   │
+│  │   Students   │◄───│    Grades    │    │  SQL Server  │   │
+│  │   Service    │    │   Service    │───►│   Database   │   │
+│  │ Port: 5001   │    │ Port: 5002   │    │  Port: 1433  │   │
+│  └──────────────┘    └──────────────┘    └──────────────┘   │
+│         │                    │                    │         │
+└─────────┼────────────────────┼────────────────────┼─────────┘
           │                    │                    │
           ▼                    ▼                    ▼
     localhost:5001       localhost:5002       localhost:1433
@@ -54,6 +54,7 @@ SchoolPortal consists of two microservices that communicate over HTTP:
 This project demonstrates:
 
 - ✅ **Microservices Architecture**: Two independent services communicating via HTTP APIs
+- ✅ **Database-per-Service Pattern**: Strict data isolation using separate databases on the same SQL Server instance
 - ✅ **Docker Containerization**: Multi-stage builds with optimized images
 - ✅ **Service Orchestration**: Docker Compose managing multiple containers
 - ✅ **Inter-Service Communication**: HTTP client for service-to-service validation
@@ -108,7 +109,7 @@ This project demonstrates:
 
 ## 📦 Project Structure
 
-```
+```text
 SchoolPortal/
 ├── SchoolPortal.Students/          # Students microservice
 │   ├── Controllers/
@@ -146,6 +147,7 @@ SchoolPortal/
 │
 ├── docker-compose.yml              # Multi-container orchestration
 ├── Directory.Packages.props        # Central Package Management
+├── .env                            # Environment variables (DB passwords, strings)
 ├── .dockerignore                   # Docker build exclusions
 └── README.md                       # This file
 ```
@@ -178,32 +180,43 @@ SchoolPortal/
    docker-compose down
    ```
 
-5. **Stop and remove all data (including database)**
+5. **Stop and remove all data (Hard Reset)**
+   To completely wipe the persistent database volume for fresh testing:
    ```bash
    docker-compose down -v
+   docker volume rm schoolportal_sqlserver-data
    ```
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
+The project utilizes an `.env` file to manage sensitive configurations seamlessly. 
+
 #### Students Service
 - `ASPNETCORE_ENVIRONMENT`: Development/Production
-- `ConnectionStrings__DefaultConnection`: SQL Server connection string
+- `ConnectionStrings__DefaultConnection`: Mapped to `${STUDENTS_CONNECTION_STRING}` in docker-compose.
 
 #### Grades Service
 - `ASPNETCORE_ENVIRONMENT`: Development/Production
-- `ConnectionStrings__DefaultConnection`: SQL Server connection string
-- `Services__StudentsUrl`: Base URL for Students Service API (default: `http://students-mvc:8080`)
+- `ConnectionStrings__DefaultConnection`: Mapped to `${GRADES_CONNECTION_STRING}` in docker-compose.
+- `Services__StudentsUrl`: Base URL for cross-container communication (default: `http://students-mvc:8080`).
 
 ### Database Connection
 
-Both services connect to the same SQL Server instance:
-```
-Server=sqlserver;Database=SchoolPortalDB;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+To ensure strict database-per-service compliance, the system utilizes two separate, isolated databases hosted on the same SQL Server instance.
+
+**Students Database**: `SchoolPortal_Students`
+**Grades Database**: `SchoolPortal_Grades`
+
+Example `.env` configuration:
+```env
+DB_PASSWORD=SchoolPortal2026
+STUDENTS_CONNECTION_STRING=Server=sqlserver;Database=SchoolPortal_Students;User Id=sa;Password=SchoolPortal2026;TrustServerCertificate=True;
+GRADES_CONNECTION_STRING=Server=sqlserver;Database=SchoolPortal_Grades;User Id=sa;Password=SchoolPortal2026;TrustServerCertificate=True;
 ```
 
-**⚠️ Security Note**: Change the default SA password in production environments!
+**⚠️ Security Note**: Change the default SA password (`SchoolPortal2026`) in production environments!
 
 ## 📊 Database Schema
 
@@ -226,7 +239,7 @@ Server=sqlserver;Database=SchoolPortalDB;User Id=sa;Password=YourStrong!Passw0rd
 | Score      | decimal   | Grade score                    |
 | GradeDate  | datetime2 | Date grade was recorded        |
 
-**Note**: The Grades table does NOT have a foreign key constraint to Students table, as they are in separate microservices. Validation is done via API calls.
+**Note**: The Grades table does NOT have a foreign key constraint to the Students table, as they are in separate microservices with isolated databases. Validation is strictly handled via API calls.
 
 ## 🔌 API Endpoints
 
@@ -270,10 +283,10 @@ Both services use optimized multi-stage Dockerfiles:
 
 ### Docker Compose Services
 
-| Service        | Image                                  | Port Mapping | Dependencies |
-|----------------|----------------------------------------|--------------|--------------|
-| sqlserver      | mcr.microsoft.com/mssql/server:2022    | 1433:1433    | -            |
-| students-mvc   | schoolportal-students-mvc (built)      | 5001:8080    | sqlserver    |
+| Service        | Image                                  | Port Mapping | Dependencies            |
+|----------------|----------------------------------------|--------------|-------------------------|
+| sqlserver      | mcr.microsoft.com/mssql/server:2022    | 1433:1433    | -                       |
+| students-mvc   | schoolportal-students-mvc (built)      | 5001:8080    | sqlserver               |
 | grades-mvc     | schoolportal-grades-mvc (built)        | 5002:8080    | sqlserver, students-mvc |
 
 ### Volumes
@@ -292,12 +305,12 @@ Both services use optimized multi-stage Dockerfiles:
 1. Navigate to http://localhost:5002
 2. Click "Manage Scores" or go to Grades menu
 3. Click "Create New Grade"
-4. Enter a valid Student ID (from Students Service)
+4. Select a valid student from the dropdown menu (fetched directly from the Students Service)
 5. Fill in course name and score
 6. Submit the form
 
 ### 3. Test Inter-Service Communication
-- Try adding a grade with a non-existent Student ID
+- Try adding a grade via direct API request with a non-existent Student ID
 - The Grades Service will call the Students Service API
 - You should see a validation error: "The selected student does not exist."
 
@@ -345,14 +358,7 @@ The application features a modern, responsive design with a neon-themed UI:
    - SQL Server (LocalDB or Express)
 
 2. **Update Connection Strings**
-   Edit `appsettings.Development.json` in both projects:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=SchoolPortalDB;Trusted_Connection=True;"
-     }
-   }
-   ```
+   Ensure `appsettings.Development.json` or `launchSettings.json` in both projects points to your local SQL server with the correct database names (`SchoolPortal_Students` and `SchoolPortal_Grades`).
 
 3. **Run Migrations**
    ```bash
@@ -366,25 +372,7 @@ The application features a modern, responsive design with a neon-themed UI:
    ```
 
 4. **Run Services**
-   ```bash
-   # Terminal 1 - Students Service
-   cd SchoolPortal.Students
-   dotnet run
-
-   # Terminal 2 - Grades Service
-   cd SchoolPortal.Grades
-   dotnet run --urls "http://localhost:5002"
-   ```
-
-5. **Update Grades Service Configuration**
-   In `appsettings.Development.json` for Grades:
-   ```json
-   {
-     "Services": {
-       "StudentsUrl": "http://localhost:5000"
-     }
-   }
-   ```
+   Open the solution in Visual Studio or use `dotnet run` commands matching the configured ports in `launchSettings.json`.
 
 ### Adding New Migrations
 
@@ -414,7 +402,7 @@ docker-compose restart
 ### Database connection issues
 - Ensure SQL Server container is running: `docker ps`
 - Check SQL Server logs: `docker logs schoolportal-sqlserver`
-- Verify connection string in `docker-compose.yml`
+- Verify connection string configurations in the `.env` file
 
 ### Port conflicts
 If ports 5001, 5002, or 1433 are already in use:
@@ -424,8 +412,8 @@ If ports 5001, 5002, or 1433 are already in use:
 
 ### Inter-service communication fails
 - Ensure both services are on the same Docker network
-- Check the `Services__StudentsUrl` environment variable in Grades service
-- Verify Students API endpoint: http://localhost:5001/api/students/check/1
+- Check the `Services__StudentsUrl` environment variable in Grades service (default: `http://students-mvc:8080`)
+- Verify Students API endpoint directly: `http://localhost:5001/Students/GetById?id=1`
 
 ## 📝 License
 
